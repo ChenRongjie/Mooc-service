@@ -16,7 +16,9 @@ public enum CommonCode implements ResultCode {
     FAIL(false, 11111, "操作失败！"),
     UNAUTHENTICATED(false, 10001, "此操作需要登陆系统！"),
     UNAUTHORISE(false, 10002, "权限不足，无权操作！"),
-    SERVER_ERROR(false, 99999, "抱歉，系统繁忙，请稍后重试！");
+    SERVER_ERROR(false, 99999, "抱歉，系统繁忙，请稍后重试！"),
+    COURSE_NOT_EXIST(false, 20001, "该课程不存在！");
+
     //    private static ImmutableMap<Integer, CommonCode> codes ;
     //操作是否成功
     boolean success;
