@@ -1,19 +1,19 @@
 package com.xuecheng.api.course;
 
-import com.xuecheng.framework.domain.course.CourseBase;
-import com.xuecheng.framework.domain.course.CourseMarket;
-import com.xuecheng.framework.domain.course.CoursePic;
-import com.xuecheng.framework.domain.course.Teachplan;
+import com.xuecheng.framework.domain.course.*;
 import com.xuecheng.framework.domain.course.ext.CourseView;
 import com.xuecheng.framework.domain.course.ext.TeachplanNode;
 import com.xuecheng.framework.domain.course.request.CourseListRequest;
 import com.xuecheng.framework.domain.course.response.AddCourseResult;
 import com.xuecheng.framework.domain.course.response.CoursePublishResult;
+import com.xuecheng.framework.domain.search.CourseSearchParam;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.ResponseResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.io.IOException;
 
 /**
  * Created by Administrator.
@@ -67,4 +67,11 @@ public interface CourseControllerApi {
 
     @ApiOperation("发布课程")
     public CoursePublishResult publish(@PathVariable String id);
+
+    @Api(value = "课程搜索", tags = {"课程搜索"})
+    public interface EsCourseControllerApi {
+        @ApiOperation("课程搜索")
+        public QueryResponseResult<CoursePub> list(int page, int size,
+                                                   CourseSearchParam courseSearchParam) throws IOException;
+    }
 }
