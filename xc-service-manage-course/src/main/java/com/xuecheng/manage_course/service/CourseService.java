@@ -61,6 +61,9 @@ public class CourseService {
     CoursePubRepository coursePubRepository;
 
     @Autowired
+    TeachplanMediaRepository teachplanMediaRepository;
+
+    @Autowired
     CmsPageClient cmsPageClient;
 
     @Value("${course-publish.dataUrlPre}")
@@ -452,4 +455,44 @@ public class CourseService {
         return courseBaseById;
     }
 
+    //保存课程计划与媒资文件的关联信息
+    public ResponseResult savemedia(TeachplanMedia teachplanMedia) {
+        if (teachplanMedia == null || StringUtils.isEmpty(teachplanMedia.getTeachplanId())) {
+            ExceptionCast.cast(CommonCode.INVALID_PARAM);
+        }
+        //校验课程计划是否是3级
+        //课程计划
+        String teachplanId = teachplanMedia.getTeachplanId();
+        //查询到课程计划
+        Optional<Teachplan> optional = teachplanRepository.findById(teachplanId);
+        if (!optional.isPresent()) {
+            ExceptionCast.cast(CommonCode.INVALID_PARAM);
+        }
+        //查询到教学计划
+        Teachplan teachplan = optional.get();
+        //取出等级
+        String grade = teachplan.getGrade();
+        if (StringUtils.isEmpty(grade) || !grade.equals("3")) {
+            //只允许选择第三级的课程计划关联视频
+            ExceptionCast.cast(CourseCode.COURSE_MEDIA_TEACHPLAN_GRADEERROR);
+        }
+        //查询teachplanMedia
+        Optional<TeachplanMedia> mediaOptional = teachplanMediaRepository.findById(teachplanId);
+        TeachplanMedia one = null;
+        if (mediaOptional.isPresent()) {
+            one = mediaOptional.get();
+        } else {
+            one = new TeachplanMedia();
+        }
+
+        //将one保存到数据库
+        one.setCourseId(teachplan.getCourseid());//课程id
+        one.setMediaId(teachplanMedia.getMediaId());//媒资文件的id
+        one.setMediaFileOriginalName(teachplanMedia.getMediaFileOriginalName());//媒资文件的原始名称
+        one.setMediaUrl(teachplanMedia.getMediaUrl());//媒资文件的url
+        one.setTeachplanId(teachplanId);
+        teachplanMediaRepository.save(one);
+
+        return new ResponseResult(CommonCode.SUCCESS);
+    }
 }
